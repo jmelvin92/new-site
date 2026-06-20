@@ -3,20 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Site — coming soon</title>
-  <meta name="description" content="Placeholder site. Project goal TBD." />
+  <title>Stick City</title>
+  <meta name="description" content="A tiny stick-figure life sim. Work, train, get rich." />
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <main class="wrap">
-    <section class="hero">
-      <h1 id="title">Project name goes here</h1>
-      <p id="tagline">A one-line description of what this is and who it's for.</p>
-      <a class="cta" id="cta" href="#">Main action</a>
-    </section>
-    <footer>
-      <p>Scaffold ready — tell Claude the goal and we'll build it out.</p>
+  <div id="app">
+    <!-- HUD -->
+    <header id="hud">
+      <div class="hud-left">
+        <span class="day">Day <b id="day">1</b></span>
+        <span class="clock" id="clock">08:00</span>
+        <span class="money">$<b id="money">50</b></span>
+      </div>
+      <div class="hud-stats">
+        <div class="stat"><label>Energy</label><div class="bar"><i id="bar-energy"></i></div></div>
+        <div class="stat"><label>Health</label><div class="bar health"><i id="bar-health"></i></div></div>
+        <div class="stat"><label>Int</label><div class="bar int"><i id="bar-int"></i></div></div>
+        <div class="stat"><label>Str</label><div class="bar str"><i id="bar-str"></i></div></div>
+        <div class="stat"><label>Chr</label><div class="bar chr"><i id="bar-chr"></i></div></div>
+      </div>
+      <div class="hud-right">
+        <button id="btn-save" title="Save game">Save</button>
+        <button id="btn-reset" title="Start over">Reset</button>
+      </div>
+    </header>
+
+    <!-- Game canvas -->
+    <div id="stage">
+      <canvas id="game" width="960" height="540"></canvas>
+      <div id="prompt" class="hidden"></div>
+      <div id="toast" class="hidden"></div>
+    </div>
+
+    <!-- Building modal -->
+    <div id="modal" class="hidden">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h2 id="modal-title">Building</h2>
+          <button id="modal-close">✕</button>
+        </div>
+        <p id="modal-desc" class="modal-desc"></p>
+        <div id="modal-actions"></div>
+      </div>
+    </div>
+
+    <!-- Win screen -->
+    <div id="winscreen" class="hidden">
+      <div class="win-card">
+        <h1>🏆 You made it!</h1>
+        <p id="win-text"></p>
+        <button id="win-restart">Play again</button>
+      </div>
+    </div>
+
+    <footer id="help">
+      <span>← → move &nbsp;·&nbsp; ↑ / Enter to go inside &nbsp;·&nbsp; touch buttons on mobile</span>
     </footer>
-  </main>
+
+    <!-- On-screen controls for touch -->
+    <div id="touch">
+      <button data-key="left">◀</button>
+      <button data-key="enter">ENTER</button>
+      <button data-key="right">▶</button>
+    </div>
+  </div>
+
+  <script src="/assets/game.js"></script>
 </body>
 </html>
