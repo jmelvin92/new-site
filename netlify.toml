@@ -1,0 +1,4 @@
+# Hood Run is a static site — no build step. Serve the public/ folder at the domain root.
+[build]
+  publish = "public"
+  command = ""

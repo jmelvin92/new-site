@@ -1,48 +1,76 @@
-# Stick City
+# Hood Run
 
-A tiny stick-figure life sim in the browser — inspired by Stick RPG. Walk around
-a small city, work for money, train your stats, and buy your way to the
-penthouse. Pure static site: no build step, no dependencies, no backend.
+A fast, top-down arcade game. Smoke detectors die one by one across the
+house — sprint to each dying alarm and swap the battery before its countdown
+runs out. Miss three and the run ends. Survive to get promoted to bigger
+properties, grab power-ups, and bank Batteries for permanent upgrades.
 
-## Play locally
+It's a single static page — **no build step, no dependencies.** Just serve
+`public/` over HTTP and play.
 
+## Play
+- **Move:** WASD / Arrow keys (d-pad on mobile)
+- **Replace battery:** E / Space when you're close
+- **Pause:** P
+
+Detectors come in types (normal, fast, stubborn), power-ups drop on the floor
+(sneakers = freeze, grape soda = slow-mo, chicken bucket = speed, heart =
+life), and clearing save milestones promotes you to larger homes with a higher
+score multiplier.
+
+## Run it locally
+Serve the `public/` folder over HTTP (absolute asset paths need a real server,
+not `file://`):
+
+```bash
+python3 -m http.server 8000 --directory public
+# then open http://localhost:8000
 ```
-npx serve public
-```
-
-Then open the URL it prints (e.g. http://localhost:3000).
-
-## Controls
-
-- **← / →** (or A/D) — walk
-- **↑ / Enter** (or W) — go inside the building you're standing at
-- On-screen buttons appear on touch devices
-
-## Goal
-
-Buy the **Penthouse** ($3000) and reach **$5000** in the bank.
-
-## How it works
-
-```
-public/
-  index.html          # HUD, canvas, modals
-  assets/styles.css   # styling
-  assets/game.js      # the whole game (state, render loop, buildings)
-```
-
-Stats: Energy, Health, Intelligence, Strength, Charm. Actions cost time/energy/
-money; sleeping starts a new day (and charges rent). Progress saves to your
-browser's localStorage.
-
-## Future: play-to-earn (not enabled)
-
-All in-game cash flows through the `Bank` object in `game.js`. It's just a number
-today. To later back it with a real Solana SPL token, reimplement
-`Bank.balance / earn / spend / canAfford` against the player's token account —
-nothing else in the game touches money. Deliberately kept that way.
 
 ## Deploy
+Host the **`public/`** folder at a domain **root** (the game uses absolute
+`/assets/...` paths). No build command is required.
 
-Static — hosts free on Cloudflare Pages, Netlify, or GitHub Pages. Push to
-GitHub and connect the repo, or serve `public/` from any static host.
+- **Netlify:** import the repo — `netlify.toml` sets the publish dir to `public`.
+- **Vercel / Cloudflare Pages:** set the output/build directory to `public`,
+  leave the build command empty.
+
+Do **not** use a GitHub Pages *project* subpath (`/new-site/`) — it breaks the
+absolute asset paths.
+
+### Contract address
+`public/assets/config.json` holds the token address shown in-game:
+
+```json
+{ "tokenCA": "" }
+```
+
+Leave it empty for a "coming soon" placeholder; paste the address after launch
+and redeploy — the in-game CA pill updates automatically.
+
+## Project layout
+```
+public/
+  index.html            # markup + overlays (menu, pause, shop, options, guide)
+  assets/
+    game.js             # all game logic (vanilla JS, deterministic sim)
+    styles.css
+    config.json         # token CA
+    img/keyart.jpg      # main-menu key art
+    sprites/player.png  # directional walk-cycle sprite sheet
+    audio/              # sd (alarm), music (loop), promote (stinger)
+tools/
+  make_player_sprite.py # regenerates the player sprite sheet
+```
+
+## Dev tools
+Append to the URL (only active with `?debug`):
+- `?debug` — collision boxes, reachability flood, `ROOMS REACHABLE x/y`
+- `?debug&play&house=N` — jump into a seeded run at house tier N
+- `?debug&shop` / `?debug&options` / `?debug&guide` — preview those screens
+- `?debug&dettest` — determinism self-test (same seed + inputs ⇒ same result)
+
+## Notes
+The simulation is **deterministic** (seeded RNG + fixed timestep + recorded
+input log) so a run can be re-simulated and verified server-side — the
+groundwork for a future on-chain (Solana) verified leaderboard.

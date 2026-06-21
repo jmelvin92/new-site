@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stick City</title>
-  <meta name="description" content="A tiny stick-figure life sim. Work, train, get rich." />
+  <title>Hood Run</title>
+  <meta name="description" content="Race around the block replacing dying smoke-detector batteries before the alarm blows." />
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
@@ -12,60 +12,185 @@
     <!-- HUD -->
     <header id="hud">
       <div class="hud-left">
-        <span class="day">Day <b id="day">1</b></span>
-        <span class="clock" id="clock">08:00</span>
-        <span class="money">$<b id="money">50</b></span>
+        <div class="stat stat-score"><span class="stat-label">Score</span><b id="score">0</b></div>
+        <div class="stat"><span class="stat-label">Best</span><b id="best">0</b></div>
+        <div class="stat"><span class="stat-label">Level</span><b id="level">1</b></div>
+        <div class="stat stat-house"><span class="stat-label">Property</span><b id="house">—</b></div>
       </div>
-      <div class="hud-stats">
-        <div class="stat"><label>Energy</label><div class="bar"><i id="bar-energy"></i></div></div>
-        <div class="stat"><label>Health</label><div class="bar health"><i id="bar-health"></i></div></div>
-        <div class="stat"><label>Int</label><div class="bar int"><i id="bar-int"></i></div></div>
-        <div class="stat"><label>Str</label><div class="bar str"><i id="bar-str"></i></div></div>
-        <div class="stat"><label>Chr</label><div class="bar chr"><i id="bar-chr"></i></div></div>
+      <div class="hud-mid">
+        <span class="combo" id="combo"></span>
+        <span class="lives" id="lives"></span>
       </div>
       <div class="hud-right">
-        <button id="btn-save" title="Save game">Save</button>
-        <button id="btn-reset" title="Start over">Reset</button>
+        <button id="btn-pause" title="Pause (P)" aria-label="Pause">
+          <svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>
+        </button>
+        <button id="btn-full" title="Fullscreen" aria-label="Fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+        <button id="btn-mute" title="Mute / unmute" aria-label="Mute">
+          <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8a5 5 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button id="btn-restart" title="Restart" aria-label="Restart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 4v6h-6"/></svg>
+        </button>
       </div>
     </header>
 
     <!-- Game canvas -->
     <div id="stage">
-      <canvas id="game" width="960" height="540"></canvas>
+      <canvas id="game" width="960" height="600"></canvas>
       <div id="prompt" class="hidden"></div>
       <div id="toast" class="hidden"></div>
-    </div>
 
-    <!-- Building modal -->
-    <div id="modal" class="hidden">
-      <div class="modal-card">
-        <div class="modal-head">
-          <h2 id="modal-title">Building</h2>
-          <button id="modal-close">✕</button>
+      <!-- Main menu (full screen) -->
+      <div id="startscreen" class="menu-screen">
+        <div class="menu-bg"></div>
+        <div class="menu-scrim"></div>
+        <div class="menu-content">
+          <div class="menu-head">
+            <h1 class="game-title">HOOD RUN</h1>
+            <p class="game-sub">Beat the chirp. Save the block.</p>
+          </div>
+          <nav class="menu-nav">
+            <button id="btn-start" class="menu-item primary">Play</button>
+            <button id="btn-guide" class="menu-item">How to Play</button>
+            <button id="btn-shop" class="menu-item">Shop</button>
+            <button id="btn-options" class="menu-item">Options</button>
+          </nav>
+          <div class="menu-foot">Best <b id="menu-best">0</b></div>
+          <button class="ca-pill hidden" type="button">
+            <span class="ca-label">CA</span><span class="ca-addr"></span><span class="ca-copy">copy</span>
+          </button>
         </div>
-        <p id="modal-desc" class="modal-desc"></p>
-        <div id="modal-actions"></div>
       </div>
-    </div>
 
-    <!-- Win screen -->
-    <div id="winscreen" class="hidden">
-      <div class="win-card">
-        <h1>🏆 You made it!</h1>
-        <p id="win-text"></p>
-        <button id="win-restart">Play again</button>
+      <!-- Game over -->
+      <div id="overscreen" class="overlay hidden">
+        <div class="card">
+          <h1 class="over-title">Alarm Blown</h1>
+          <p id="over-text"></p>
+          <div class="menu-btns">
+            <button id="btn-again" class="btn-primary">Play Again</button>
+            <div class="menu-row">
+              <button id="btn-shop2" class="btn-alt">Shop</button>
+              <button id="btn-over-menu" class="btn-alt">Main Menu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pause -->
+      <div id="pausescreen" class="overlay hidden">
+        <div class="card">
+          <h1>Paused</h1>
+          <p class="tagline">Take a breather — your run is waiting.</p>
+          <div class="menu-btns">
+            <button id="btn-resume" class="btn-primary">Resume</button>
+            <div class="menu-row">
+              <button id="btn-pause-restart" class="btn-alt">Restart</button>
+              <button id="btn-pause-options" class="btn-alt">Options</button>
+              <button id="btn-pause-menu" class="btn-alt">Main Menu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Options -->
+      <div id="optionsscreen" class="overlay hidden">
+        <div class="card">
+          <h1>Options</h1>
+          <div class="opt-row">
+            <label>Music</label>
+            <input id="vol-music" type="range" min="0" max="100" value="32" />
+            <span id="vol-music-val">32%</span>
+          </div>
+          <div class="opt-row">
+            <label>Sound FX</label>
+            <input id="vol-sfx" type="range" min="0" max="100" value="85" />
+            <span id="vol-sfx-val">85%</span>
+          </div>
+          <div class="menu-btns"><button id="btn-options-close" class="btn-primary">Back</button></div>
+        </div>
+      </div>
+
+      <!-- Perk shop -->
+      <div id="shopscreen" class="overlay hidden">
+        <div class="card">
+          <h1>Battery Shop</h1>
+          <p class="tagline">Banked <b id="shop-bank">0</b> batteries — permanent upgrades that carry across runs.</p>
+          <div id="shop-list"></div>
+          <div class="menu-btns"><button id="btn-shop-close" class="btn-primary">Back</button></div>
+        </div>
+      </div>
+
+      <!-- How to play -->
+      <div id="guidescreen" class="overlay hidden">
+        <div class="card card-wide">
+          <h1>How to Play</h1>
+          <div class="guide">
+            <section>
+              <h2>The Goal</h2>
+              <p>Smoke detectors run out of battery one by one. When one dies its room <b>flashes red</b>, the alarm <b>chirps</b>, and a countdown ring drains. Run to it and replace the battery before the ring empties. Miss <b>three</b> and the run ends.</p>
+            </section>
+            <section>
+              <h2>Controls</h2>
+              <div class="legend">
+                <div class="legend-item"><span class="key">WASD</span><span class="txt"><b>Move</b> — arrow keys or d-pad also work</span></div>
+                <div class="legend-item"><span class="key">E</span><span class="txt"><b>Replace battery</b> — when you're close (Space also)</span></div>
+                <div class="legend-item"><span class="key">P</span><span class="txt"><b>Pause</b> the run</span></div>
+              </div>
+            </section>
+            <section>
+              <h2>Detector Types</h2>
+              <div class="legend">
+                <div class="legend-item"><span class="dot" style="background:#ffd24a"></span><span class="txt"><b>Normal</b> — one press to fix.</span></div>
+                <div class="legend-item"><span class="dot" style="background:#ff5a3c"></span><span class="txt"><b>Fast</b> — drains much quicker. Prioritize it.</span></div>
+                <div class="legend-item"><span class="dot" style="background:#b07cff"></span><span class="txt"><b>Stubborn</b> — needs two presses (shows the count).</span></div>
+              </div>
+            </section>
+            <section>
+              <h2>Power-ups</h2>
+              <div class="legend">
+                <div class="legend-item"><span class="dot" style="background:#5bd6ff"></span><span class="txt"><b>Sneakers</b> — freeze: all countdowns stop briefly.</span></div>
+                <div class="legend-item"><span class="dot" style="background:#b98cff"></span><span class="txt"><b>Grape Soda</b> — slow-mo: countdowns crawl for a while.</span></div>
+                <div class="legend-item"><span class="dot" style="background:#ffd24a"></span><span class="txt"><b>Chicken Bucket</b> — speed burst: run much faster.</span></div>
+                <div class="legend-item"><span class="dot" style="background:#ff7b7b"></span><span class="txt"><b>Heart</b> — restores a life.</span></div>
+              </div>
+              <p class="note">They drop on the floor and vanish if you don't grab them — the ring around each shows its timer.</p>
+            </section>
+            <section>
+              <h2>Get Promoted</h2>
+              <p>Keep saving batteries and you'll be <b>promoted</b> to a bigger property — Apartment, House, Big House, Mansion, Tower. Bigger homes mean more rooms and a higher <b>score multiplier</b>. Off-screen alarms show as arrows at the edge of your view.</p>
+            </section>
+            <section>
+              <h2>Batteries &amp; Perks</h2>
+              <p>Your score becomes <b>Batteries</b> when the run ends. Spend them in the <b>Shop</b> on permanent perks — faster feet, steadier hands, longer reach, and extra lives — that carry across every future run.</p>
+            </section>
+          </div>
+          <div class="menu-btns"><button id="btn-guide-close" class="btn-primary">Got It</button></div>
+        </div>
       </div>
     </div>
 
     <footer id="help">
-      <span>← → move &nbsp;·&nbsp; ↑ / Enter to go inside &nbsp;·&nbsp; touch buttons on mobile</span>
+      <span>WASD / Arrows to move &nbsp;·&nbsp; E / Space to replace a battery &nbsp;·&nbsp; d-pad on mobile</span>
+      <button class="ca-pill hidden" type="button">
+        <span class="ca-label">CA</span><span class="ca-addr"></span><span class="ca-copy">copy</span>
+      </button>
     </footer>
 
     <!-- On-screen controls for touch -->
     <div id="touch">
-      <button data-key="left">◀</button>
-      <button data-key="enter">ENTER</button>
-      <button data-key="right">▶</button>
+      <div class="dpad">
+        <button data-key="up" class="d-up">▲</button>
+        <div class="dpad-mid">
+          <button data-key="left">◀</button>
+          <button data-key="down" class="d-down">▼</button>
+          <button data-key="right">▶</button>
+        </div>
+      </div>
+      <button data-key="action" class="action-btn">🔋<span>Replace</span></button>
     </div>
   </div>
 
