@@ -141,7 +141,7 @@ body {
 .card-hero { padding: 0; overflow: hidden; }
 .hero-art {
   position: relative; height: 224px;
-  background: url(/assets/img/keyart.jpg) center 24% / cover no-repeat;
+  background: url(img/keyart.jpg) center 24% / cover no-repeat;
   display: flex; align-items: flex-end;
 }
 .hero-fade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(19,25,34,0) 42%, rgba(19,25,34,0.92) 100%); }
@@ -153,7 +153,7 @@ body {
 .menu-screen { position: fixed; inset: 0; z-index: 60; overflow: hidden; background: #06070a; }
 .menu-bg {
   position: absolute; inset: 0; transform: scale(1.06);
-  background: url(/assets/img/keyart.jpg) 60% center / cover no-repeat;
+  background: url(img/keyart.jpg) 60% center / cover no-repeat;
 }
 .menu-scrim {
   position: absolute; inset: 0;

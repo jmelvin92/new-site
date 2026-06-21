@@ -462,7 +462,7 @@
   function loadSd() {
     if (sdBuffer || sdLoading || !actx) return;
     sdLoading = true;
-    fetch('/assets/audio/sd.mp3')
+    fetch('assets/audio/sd.mp3')
       .then((r) => r.arrayBuffer())
       .then((b) => actx.decodeAudioData(b))
       .then((buf) => { sdBuffer = buf; })
@@ -475,7 +475,7 @@
     if (musicBuf) { startMusic(); return; }
     if (musicLoading || !actx) return;
     musicLoading = true;
-    fetch('/assets/audio/music.mp3')
+    fetch('assets/audio/music.mp3')
       .then((r) => r.arrayBuffer())
       .then((b) => actx.decodeAudioData(b))
       .then((buf) => { musicBuf = buf; startMusic(); })
@@ -491,7 +491,7 @@
   function loadPromote() {
     if (promoteBuf || promoteLoading || !actx) return;
     promoteLoading = true;
-    fetch('/assets/audio/promote.mp3')
+    fetch('assets/audio/promote.mp3')
       .then((r) => r.arrayBuffer())
       .then((b) => actx.decodeAudioData(b))
       .then((buf) => { promoteBuf = buf; })
@@ -724,7 +724,7 @@
     });
   });
   if (window.HOODRUN_CA) applyCA(window.HOODRUN_CA);
-  fetch('/assets/config.json', { cache: 'no-store' })
+  fetch('assets/config.json', { cache: 'no-store' })
     .then((r) => (r.ok ? r.json() : null))
     .then((c) => { if (c && c.tokenCA) applyCA(String(c.tokenCA)); })
     .catch(() => {});
@@ -1477,7 +1477,7 @@
   // (facing right — mirrored for left), and back (walking away). Until the
   // image loads (or if it 404s) the game falls back to the stick figure.
   const PLAYER_SPRITE = {
-    src: '/assets/sprites/player.png',
+    src: 'assets/sprites/player.png',
     cols: 6,          // frames per row (col 0 idle, 1..N-1 walk cycle)
     rows: 3,          // directional views, in this order: front, side, back
     height: 60,       // on-screen draw height in px (width keeps source aspect)
